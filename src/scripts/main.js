@@ -282,6 +282,7 @@ function initGalleryFilterAndLightbox() {
   const modalClose = document.getElementById('lightbox-close');
 
   if (filterBtns.length && cards.length) {
+    const cardTimers = new WeakMap();
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         filterBtns.forEach(b => b.classList.remove('active'));
@@ -289,19 +290,24 @@ function initGalleryFilterAndLightbox() {
         const filter = btn.dataset.filter;
 
         cards.forEach(card => {
+          const prevTimer = cardTimers.get(card);
+          if (prevTimer) clearTimeout(prevTimer);
+
           const category = card.dataset.category;
           if (filter === 'all' || category === filter) {
             card.style.display = 'block';
-            setTimeout(() => {
+            const t = setTimeout(() => {
               card.style.opacity = '1';
               card.style.transform = 'translateY(0)';
-            }, 50);
+            }, 30);
+            cardTimers.set(card, t);
           } else {
             card.style.opacity = '0';
             card.style.transform = 'translateY(12px)';
-            setTimeout(() => {
+            const t = setTimeout(() => {
               card.style.display = 'none';
-            }, 250);
+            }, 220);
+            cardTimers.set(card, t);
           }
         });
       });
