@@ -25,7 +25,6 @@ Rediseño web premium y de alta conversión para **Climatizar.com**, empresa esp
 - **HTML5 Semántico & Schema.org JSON-LD**
 - **Modern CSS3** (Tokens de diseño, custom properties, glassmorphism, layouts asimétricos, responsive design 360px–4K)
 - **Vanilla Modern JavaScript** (IntersectionObserver, Scroll Progress, Spotlight, dynamic link generator)
-- **Puppeteer** (Suite automatizada de control de calidad E2E para Desktop y Mobile)
 
 ---
 
@@ -48,6 +47,12 @@ npm run build
 # Previsualizar el build de producción
 npm run preview
 ```
+
+## 🌐 Publicación
+
+El sitio se compila con `npm run build` y lo que se publica es la carpeta `dist/` (no la raíz del repo: las imágenes viven en `public/` y Vite las copia a `dist/`). Las rutas son relativas, así que funciona en un dominio propio o en un subdirectorio.
+
+- **Vercel / Netlify**: ya configurado (`vercel.json`, `netlify.toml`); solo importar el repo.
 
 ---
 
