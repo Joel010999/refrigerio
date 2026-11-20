@@ -2452,3 +2452,396 @@ button {
     height: 64px;
   }
 }
+
+/* --- HERO CAROUSEL --- */
+.hero-carousel {
+  display: grid;
+}
+
+.hero-slide {
+  grid-area: 1 / 1;
+  position: relative;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s var(--ease-smooth), visibility 0.8s;
+}
+
+.hero-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.hero-carousel .hero-image-vignette {
+  z-index: 1;
+}
+
+.hero-slide-caption {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 52px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  color: var(--white);
+  text-align: left;
+}
+
+.hero-slide-tag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--navy-900);
+  background: var(--cyan-accent);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.hero-slide-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.25;
+  max-width: 26ch;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+}
+
+.hero-slide-link {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--sky-400);
+}
+
+.hero-slide-link:hover {
+  color: var(--white);
+}
+
+.hero-carousel-dots {
+  position: absolute;
+  left: 24px;
+  bottom: 22px;
+  z-index: 3;
+  display: flex;
+  gap: 8px;
+}
+
+.hero-carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.45);
+  transition: all var(--transition-base);
+}
+
+.hero-carousel-dot.is-active {
+  width: 28px;
+  background: var(--white);
+}
+
+@media (max-width: 640px) {
+  .hero-slide-caption {
+    left: 16px;
+    right: 16px;
+    bottom: 44px;
+  }
+  .hero-slide-title {
+    font-size: 1.1rem;
+  }
+  .hero-carousel-dots {
+    left: 16px;
+    bottom: 18px;
+  }
+}
+
+/* --- QUIÉN ESTÁ DETRÁS (MARCA PERSONAL) --- */
+.founder-section {
+  padding: 96px 0;
+  background: var(--slate-50);
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.founder-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.founder-media {
+  position: relative;
+}
+
+.founder-media img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: 60% center;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+}
+
+.founder-badge {
+  position: absolute;
+  left: 24px;
+  bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 20px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: var(--shadow-lg);
+}
+
+.founder-badge-name {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--navy-900);
+}
+
+.founder-badge-role {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--slate-600);
+}
+
+.founder-copy .section-lead {
+  margin: 16px 0 24px;
+}
+
+.founder-points {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 20px;
+  margin-bottom: 32px;
+}
+
+.founder-points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-weight: 600;
+  color: var(--navy-900);
+  font-size: 0.95rem;
+}
+
+.founder-points svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: var(--blue-primary);
+}
+
+@media (max-width: 992px) {
+  .founder-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .founder-media img {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (max-width: 640px) {
+  .founder-section {
+    padding: 72px 0;
+  }
+  .founder-points {
+    grid-template-columns: 1fr;
+  }
+  .founder-actions .btn {
+    width: 100%;
+  }
+}
+
+/* --- EQUIPOS Y COMBOS --- */
+.equipment-section {
+  padding: 96px 0;
+  background: var(--white);
+  border-top: 1px solid var(--slate-200);
+}
+
+.equipment-brands {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 28px;
+  margin-bottom: 36px;
+  color: var(--navy-900);
+}
+
+.equipment-brands-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--slate-500);
+}
+
+.equipment-brands img {
+  height: 30px;
+  width: auto;
+}
+
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.equipment-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 28px 24px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+}
+
+.equipment-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--blue-primary);
+  box-shadow: var(--shadow-lg);
+}
+
+.equipment-tag {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: var(--blue-tint);
+  color: var(--blue-primary);
+}
+
+.equipment-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--navy-900);
+  line-height: 1.15;
+}
+
+.equipment-title small {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--slate-500);
+}
+
+.equipment-desc {
+  font-size: 0.925rem;
+  color: var(--slate-600);
+}
+
+.equipment-specs {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 0;
+  border-top: 1px solid var(--slate-200);
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.equipment-specs li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--slate-700);
+}
+
+.equipment-specs svg {
+  flex-shrink: 0;
+  color: var(--whatsapp);
+}
+
+.equipment-price {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--slate-500);
+}
+
+.equipment-cta {
+  margin-top: auto;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.equipment-notes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 28px;
+}
+
+.equipment-note {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 24px;
+  border-radius: var(--radius-lg);
+  background: var(--slate-50);
+  border: 1px dashed var(--slate-300);
+  transition: all var(--transition-base);
+}
+
+.equipment-note:hover {
+  border-color: var(--blue-primary);
+  background: var(--blue-tint);
+}
+
+.equipment-note strong {
+  color: var(--navy-900);
+}
+
+.equipment-note span {
+  font-size: 0.9rem;
+  color: var(--blue-primary);
+  font-weight: 600;
+}
+
+@media (max-width: 1100px) {
+  .equipment-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .equipment-section {
+    padding: 72px 0;
+  }
+  .equipment-grid,
+  .equipment-notes {
+    grid-template-columns: 1fr;
+  }
+  .equipment-brands {
+    gap: 20px;
+  }
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .header-phone-badge {
+    display: none;
+  }
+  .nav-desktop {
+    gap: 18px;
+  }
+  .ticker-content,
+  .ticker-content span,
+  .ticker-link {
+    white-space: nowrap;
+  }
+  .ticker-right > span,
+  .ticker-right > a:last-child {
+    display: none;
+  }
+}

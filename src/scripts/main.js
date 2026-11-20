@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollProgressBar();
   initCursorSpotlight();
   initStickyHeader();
+  initHeroCarousel();
   initMobileDrawer();
   initScrollSpy();
   initFrigoriasCalculator();
@@ -372,7 +373,7 @@ function initCoverageSearch() {
     statusMsg.innerHTML = `
       <span class="zone-feedback-alert verified">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-        ¡Confirmado! Tenemos cobertura técnica disponible en <strong>${val}</strong> con turnos de 24 a 48 hs.
+        ¡Listo! Llegamos a <strong>${val}</strong>. Escribinos por WhatsApp y coordinamos la visita.
       </span>
     `;
   };
@@ -528,4 +529,56 @@ function initCounters() {
   }, { threshold: 0.4 });
 
   counterEls.forEach(el => observer.observe(el));
+}
+
+/* ==========================================================================
+   HERO CAROUSEL
+   ========================================================================== */
+function initHeroCarousel() {
+  const carousel = document.querySelector('[data-carousel]');
+  if (!carousel) return;
+
+  const slides = carousel.querySelectorAll('[data-slide]');
+  const dots = carousel.querySelectorAll('[data-slide-to]');
+  if (slides.length < 2) return;
+
+  let current = 0;
+  let timer = null;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const show = (index) => {
+    current = (index + slides.length) % slides.length;
+    slides.forEach((slide, i) => {
+      const active = i === current;
+      slide.classList.toggle('is-active', active);
+      slide.setAttribute('aria-hidden', String(!active));
+    });
+    dots.forEach((dot, i) => dot.classList.toggle('is-active', i === current));
+  };
+
+  const stop = () => {
+    clearInterval(timer);
+    timer = null;
+  };
+
+  const start = () => {
+    if (reduceMotion || timer) return;
+    timer = setInterval(() => show(current + 1), 5500);
+  };
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      show(Number(dot.dataset.slideTo));
+      stop();
+      start();
+    });
+  });
+
+  carousel.addEventListener('mouseenter', stop);
+  carousel.addEventListener('mouseleave', start);
+  carousel.addEventListener('focusin', stop);
+  carousel.addEventListener('focusout', start);
+  document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+
+  start();
 }
