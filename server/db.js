@@ -12,6 +12,7 @@ export const pool = new pg.Pool({
   ssl: isLocal ? false : { rejectUnauthorized: false },
   max: 5,
 });
+pool.on('error', (err) => console.error('Error de conexión PostgreSQL:', err.message));
 
 const DEFAULT_SPECS = ['BGH, Philco o TCL', 'Inverter u On/Off', 'Combo con instalación incluida', '1 año de garantía'];
 
@@ -35,7 +36,19 @@ export const DEFAULT_SETTINGS = {
   price_fallback: 'Precio y stock del día por WhatsApp',
 };
 
-export async function migrate() {
+export async function migrate(retries = 10) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await runMigrations();
+    } catch (err) {
+      if (attempt >= retries) throw err;
+      console.error(`Base no disponible (${err.message}), reintento ${attempt}/${retries}...`);
+      await new Promise((r) => setTimeout(r, 3000));
+    }
+  }
+}
+
+async function runMigrations() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS settings (
       key TEXT PRIMARY KEY,
