@@ -2266,6 +2266,7 @@ button {
 }
 
 .footer-nav-anchor {
+  min-height: 32px;
   font-size: 0.9rem;
   color: var(--slate-400);
   transition: all var(--transition-fast);
@@ -2510,6 +2511,8 @@ button {
 }
 
 .hero-slide-link {
+  display: inline-block;
+  padding: 10px 0;
   font-size: 0.9rem;
   font-weight: 700;
   color: var(--sky-400);
@@ -2529,11 +2532,18 @@ button {
 }
 
 .hero-carousel-dot {
+  position: relative;
   width: 10px;
   height: 10px;
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.45);
   transition: all var(--transition-base);
+}
+
+.hero-carousel-dot::after {
+  content: '';
+  position: absolute;
+  inset: -12px -4px;
 }
 
 .hero-carousel-dot.is-active {
@@ -2862,4 +2872,36 @@ button {
   font-size: 1.15rem;
   font-weight: 800;
   color: var(--slate-900, #0f172a);
+}
+
+.hero-grid > *,
+.panorama-inner-grid > *,
+.conversion-cockpit-card > *,
+.calculator-console-card > *,
+.gallery-masthead > * {
+  min-width: 0;
+}
+
+.zone-validator-form > * {
+  min-width: 0;
+}
+
+.footer-channel-row a {
+  display: inline-block;
+  padding: 7px 0;
+}
+
+@media (max-width: 640px) {
+  .zone-validator-form {
+    padding-left: 16px;
+    gap: 8px;
+  }
+  .zone-validator-form .btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .btn {
+    white-space: normal;
+    text-align: center;
+  }
 }
