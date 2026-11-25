@@ -6,12 +6,20 @@
   "scripts": {
     "dev": "vite --host --port 3000",
     "build": "vite build",
-    "preview": "vite preview --port 3000"
+    "preview": "vite preview --port 3000",
+    "start": "node server/index.js",
+    "dev:server": "node --watch server/index.js"
   },
   "devDependencies": {
     "vite": "^6.0.0"
   },
   "dependencies": {
-    "gsap": "^3.15.1"
+    "express": "^4.22.3",
+    "gsap": "^3.15.1",
+    "multer": "^2.5.0",
+    "pg": "^8.23.1"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

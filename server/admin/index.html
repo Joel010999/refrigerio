@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Panel · Climatizar.com</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <section id="login-view" class="login" hidden>
+    <form id="login-form" class="login-card">
+      <img src="/images/logo.svg" alt="Climatizar.com" class="login-logo">
+      <h1>Panel de administración</h1>
+      <label>Contraseña
+        <input type="password" name="password" autocomplete="current-password" required autofocus>
+      </label>
+      <p class="form-error" id="login-error" hidden></p>
+      <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+  </section>
+
+  <div id="app-view" class="app" hidden>
+    <header class="topbar">
+      <div class="brand"><img src="/images/logo.svg" alt="Climatizar.com"><span>Panel</span></div>
+      <nav class="tabs" role="tablist">
+        <button class="tab is-active" data-tab="products">Equipos</button>
+        <button class="tab" data-tab="slides">Carrusel</button>
+        <button class="tab" data-tab="whatsapp">WhatsApp</button>
+        <button class="tab" data-tab="stats">Consultas</button>
+      </nav>
+      <div class="topbar-actions">
+        <a href="/" target="_blank" rel="noopener" class="btn btn-ghost">Ver web</a>
+        <button id="logout-btn" class="btn btn-ghost">Salir</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section data-panel="products">
+        <div class="panel-head">
+          <div>
+            <h2>Equipos y combos</h2>
+            <p class="muted">Lo que cargues acá aparece en la sección "Equipos y Combos" de la web. Cada equipo tiene su botón de WhatsApp con el mensaje armado.</p>
+          </div>
+          <button class="btn btn-primary" data-new="products">+ Nuevo equipo</button>
+        </div>
+        <div class="list" id="products-list"></div>
+      </section>
+
+      <section data-panel="slides" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>Carrusel de la portada</h2>
+            <p class="muted">Placas que rotan arriba de todo: servicios, promos del momento, financiación.</p>
+          </div>
+          <button class="btn btn-primary" data-new="slides">+ Nueva placa</button>
+        </div>
+        <div class="list" id="slides-list"></div>
+      </section>
+
+      <section data-panel="whatsapp" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>WhatsApp</h2>
+            <p class="muted">Todos los botones de la web (equipos, carrusel, calculadora, formulario y contacto) usan este número.</p>
+          </div>
+        </div>
+        <form id="settings-form" class="card form-grid">
+          <label>Número de WhatsApp (con código de país, sin + ni espacios)
+            <input name="whatsapp_number" inputmode="numeric" placeholder="5491112345678" required>
+          </label>
+          <label>Mensaje automático de los equipos
+            <textarea name="product_message_template" rows="3"></textarea>
+            <small class="muted"><code>{producto}</code> se reemplaza por la capacidad del equipo (o por su nombre si no tiene). Si un equipo tiene mensaje propio, se usa ese.</small>
+          </label>
+          <label>Texto cuando un equipo no tiene precio
+            <input name="price_fallback">
+          </label>
+          <div class="form-actions">
+            <a id="wa-test" class="btn btn-ghost" target="_blank" rel="noopener">Probar número</a>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+      </section>
+
+      <section data-panel="stats" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>Consultas por WhatsApp</h2>
+            <p class="muted">Clics en los botones de WhatsApp de la web. Un clic abre el chat; no garantiza que la persona haya enviado el mensaje.</p>
+          </div>
+        </div>
+        <div class="stats-grid" id="stats-totals"></div>
+        <div class="two-col">
+          <div class="card"><h3>Por equipo (30 días)</h3><table id="stats-products"></table></div>
+          <div class="card"><h3>Por botón (30 días)</h3><table id="stats-sources"></table></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="editor">
+    <form id="editor-form" method="dialog" class="editor">
+      <h2 id="editor-title"></h2>
+      <div id="editor-fields" class="form-grid"></div>
+      <p class="form-error" id="editor-error" hidden></p>
+      <div class="form-actions">
+        <button type="button" class="btn btn-danger" id="editor-delete">Eliminar</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn btn-ghost" id="editor-cancel">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" hidden></div>
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

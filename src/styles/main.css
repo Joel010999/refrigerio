@@ -2845,3 +2845,21 @@ button {
     display: none;
   }
 }
+
+.equipment-image {
+  width: calc(100% + 48px);
+  margin: -28px -24px 4px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.equipment-card.has-image {
+  overflow: hidden;
+}
+
+.equipment-price.has-price {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--slate-900, #0f172a);
+}

@@ -13,7 +13,7 @@ Rediseño web premium y de alta conversión para **Climatizar.com**, empresa esp
 - **Calculadora Interactiva de Frigorías**: Estimación en tiempo real por superficie ($m^2$), tipo de ambiente y exposición solar, con recomendación Inverter y botón directo a WhatsApp.
 - **Galería con Lightbox**: Proyectos reales con filtros por categoría y visualizador modal a pantalla completa con navegación por teclado.
 - **Validador de Cobertura**: Buscador en tiempo real de disponibilidad técnica para barrios y partidos de CABA y GBA.
-- **Formulario Express & Botón Flotante**: Canales rápidos de consulta con mensajes precargados según el servicio elegido.
+- **Formulario Express**: Canales rápidos de consulta con mensajes precargados según el servicio elegido.
 - **Marcas Atendidas**: Soporte multimarca homologado (BGH, Samsung, LG, Daikin, Surrey, Carrier, Philco, Midea).
 - **SEO & Datos Estructurados**: Schema.org `HVACBusiness` completo, Open Graph, Twitter Cards y semántica accesible (WCAG AA).
 
@@ -48,11 +48,22 @@ npm run build
 npm run preview
 ```
 
-## 🌐 Publicación
+## 🌐 Publicación (Railway + PostgreSQL)
 
-El sitio se compila con `npm run build` y lo que se publica es la carpeta `dist/` (no la raíz del repo: las imágenes viven en `public/` y Vite las copia a `dist/`). Las rutas son relativas, así que funciona en un dominio propio o en un subdirectorio.
+La web corre con un servidor Node (`server/`) que sirve el sitio compilado (`dist/`), la API y el panel de administración, con los datos en PostgreSQL.
 
-- **Vercel / Netlify**: ya configurado (`vercel.json`, `netlify.toml`); solo importar el repo.
+- **Build:** `npm run build` · **Start:** `npm start` (ya configurado en `railway.json`).
+- **Variables:** `DATABASE_URL`, `ADMIN_PASSWORD`, `SESSION_SECRET` (ver `.env.example`). Las tablas se crean y se cargan con el contenido inicial al arrancar.
+- **Local:** `npm run build && npm start` con esas variables en el entorno.
+
+Si el sitio se publica sin servidor (solo `dist/`), se ve el contenido fijo del HTML.
+
+## 🛠️ Panel de administración (`/admin`)
+
+- **Equipos:** alta, edición, foto, precio opcional, orden y visibilidad. Cada equipo genera su botón de WhatsApp con el mensaje armado.
+- **Carrusel:** placas de la portada (servicios, promos, financiación) con botón a WhatsApp o a una sección.
+- **WhatsApp:** número único para todos los botones de la web y plantilla del mensaje de los equipos.
+- **Consultas:** clics en los botones de WhatsApp por equipo y por botón (24 h, 7 y 30 días).
 
 ---
 

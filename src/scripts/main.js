@@ -3,11 +3,15 @@
  * Core Interaction, Motion Engine & Engineering Utility Suite
  */
 
+let waNumber = '5491176768392';
+const waLink = (message) => `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+
 document.addEventListener('DOMContentLoaded', () => {
   initScrollProgressBar();
   initCursorSpotlight();
   initStickyHeader();
-  initHeroCarousel();
+  loadSiteContent().finally(initHeroCarousel);
+  initWhatsAppTracking();
   initMobileDrawer();
   initScrollSpy();
   initFrigoriasCalculator();
@@ -236,8 +240,7 @@ function initFrigoriasCalculator() {
 
     if (waBtn) {
       const message = `Hola Climatizar.com! Estuve usando su calculadora web para un ambiente de ${currentArea}m² (${currentRoomLabel}, ${currentSunLabel}). Me dio una estimación de ${formattedFrigorias} frigorías (${btu} BTU). ¿Me podrían enviar presupuesto para provisión e instalación de equipo?`;
-      const encoded = encodeURIComponent(message);
-      waBtn.href = `https://wa.me/5491176768392?text=${encoded}`;
+      waBtn.href = waLink(message);
     }
   };
 
@@ -440,9 +443,8 @@ function initQuickQuoteForm() {
     }
     text += `¿Tienen disponibilidad esta semana? Muchas gracias!`;
 
-    const encoded = encodeURIComponent(text);
-    const waUrl = `https://wa.me/5491176768392?text=${encoded}`;
-    window.open(waUrl, '_blank', 'noopener,noreferrer');
+    trackWhatsApp('formulario');
+    window.open(waLink(text), '_blank', 'noopener,noreferrer');
   });
 }
 
@@ -581,4 +583,124 @@ function initHeroCarousel() {
   document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
 
   start();
+}
+
+/* ==========================================================================
+   15. CONTENIDO DESDE EL PANEL (equipos, carrusel y número de WhatsApp)
+   ========================================================================== */
+const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, c => (
+  { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+));
+
+const CHECK_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+const WA_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.696c.969.541 1.807.828 2.806.828 3.181 0 5.767-2.587 5.767-5.766.001-3.182-2.585-5.811-5.767-5.811zm8.01 5.766c-.001 4.412-3.59 8-8.006 8-1.378 0-2.673-.356-3.805-.978l-4.23 1.107 1.127-4.122c-.687-1.187-1.054-2.55-1.054-3.955.002-4.413 3.591-8.002 8.006-8.002 4.415 0 8.008 3.589 8.008 8.004z"/></svg>';
+
+async function loadSiteContent() {
+  let data;
+  try {
+    const res = await fetch(new URL('api/site', document.baseURI), { headers: { Accept: 'application/json' } });
+    if (!res.ok || !(res.headers.get('content-type') || '').includes('json')) return;
+    data = await res.json();
+  } catch {
+    return;
+  }
+
+  const { settings = {}, products = [], slides = [] } = data;
+  if (settings.whatsapp_number) {
+    waNumber = settings.whatsapp_number;
+    document.querySelectorAll('a[href*="wa.me/"]').forEach(a => {
+      a.href = a.href.replace(/wa\.me\/\d+/, `wa.me/${waNumber}`);
+    });
+  }
+  renderProducts(products, settings);
+  renderSlides(slides);
+}
+
+function renderProducts(products, settings) {
+  const grid = document.querySelector('.equipment-grid');
+  if (!grid || !products.length) return;
+
+  const template = settings.product_message_template || 'Hola Climatizar.com, quisiera precio y disponibilidad del {producto}';
+  grid.innerHTML = products.map(p => {
+    const message = p.wa_message || template.replace('{producto}', p.capacity || p.title);
+    const specs = (p.specs || []).map(s => `<li>${CHECK_ICON}<span>${escapeHtml(s)}</span></li>`).join('');
+    const title = p.capacity && p.title.includes(p.capacity)
+      ? `${escapeHtml(p.title)} <small>frigorías</small>`
+      : escapeHtml(p.title);
+    return `<article class="equipment-card${p.image_url ? ' has-image' : ''}">
+      ${p.image_url ? `<img class="equipment-image" src="${escapeHtml(p.image_url)}" alt="${escapeHtml(p.title)}" loading="lazy" decoding="async">` : ''}
+      ${p.tag ? `<span class="equipment-tag">${escapeHtml(p.tag)}</span>` : ''}
+      <h3 class="equipment-title">${title}</h3>
+      ${p.description ? `<p class="equipment-desc">${escapeHtml(p.description)}</p>` : ''}
+      ${specs ? `<ul class="equipment-specs">${specs}</ul>` : ''}
+      <div class="equipment-price${p.price ? ' has-price' : ''}">${escapeHtml(p.price || settings.price_fallback || 'Precio y stock del día por WhatsApp')}</div>
+      <a href="${escapeHtml(waLink(message))}" target="_blank" rel="noopener" class="btn btn-whatsapp equipment-cta" data-wa-source="producto" data-product-id="${p.id}">
+        ${WA_ICON}<span>Consultar este equipo</span>
+      </a>
+    </article>`;
+  }).join('');
+}
+
+function renderSlides(slides) {
+  const carousel = document.querySelector('[data-carousel]');
+  if (!carousel || !slides.length) return;
+
+  carousel.querySelectorAll('[data-slide]').forEach(el => el.remove());
+  const dots = carousel.querySelector('.hero-carousel-dots');
+  const vignette = carousel.querySelector('.hero-image-vignette');
+
+  slides.forEach((s, i) => {
+    const href = s.wa_message ? waLink(s.wa_message) : (s.link_url || '');
+    const external = s.wa_message || /^https?:/.test(href);
+    const slide = document.createElement('div');
+    slide.className = `hero-slide${i === 0 ? ' is-active' : ''}`;
+    slide.dataset.slide = '';
+    slide.setAttribute('aria-roledescription', 'diapositiva');
+    slide.setAttribute('aria-label', `${i + 1} de ${slides.length}`);
+    if (i) slide.setAttribute('aria-hidden', 'true');
+    slide.innerHTML = `
+      ${s.image_url ? `<img src="${escapeHtml(s.image_url)}" alt="${escapeHtml(s.title)}" width="1024" height="558" ${i ? 'loading="lazy" decoding="async"' : 'loading="eager"'}>` : ''}
+      <div class="hero-slide-caption">
+        ${s.tag ? `<span class="hero-slide-tag">${escapeHtml(s.tag)}</span>` : ''}
+        <p class="hero-slide-title">${escapeHtml(s.title)}</p>
+        ${href && s.link_label ? `<a href="${escapeHtml(href)}" class="hero-slide-link" ${external ? 'target="_blank" rel="noopener"' : ''} ${s.wa_message ? 'data-wa-source="carrusel"' : ''}>${escapeHtml(s.link_label)} &rarr;</a>` : ''}
+      </div>`;
+    carousel.insertBefore(slide, vignette || dots);
+  });
+
+  if (dots) {
+    dots.innerHTML = slides.length < 2 ? '' : slides.map((s, i) => (
+      `<button type="button" class="hero-carousel-dot${i === 0 ? ' is-active' : ''}" data-slide-to="${i}" aria-label="Ver: ${escapeHtml(s.tag || s.title)}"></button>`
+    )).join('');
+  }
+}
+
+/* ==========================================================================
+   16. MEDICIÓN DE CLICS A WHATSAPP (se ve en el panel)
+   ========================================================================== */
+function trackWhatsApp(source, productId = null) {
+  const body = JSON.stringify({ source, product_id: productId });
+  const url = new URL('api/track', document.baseURI);
+  try {
+    if (!navigator.sendBeacon?.(url, body)) {
+      fetch(url, { method: 'POST', body, keepalive: true }).catch(() => {});
+    }
+  } catch {
+    /* sin backend (hosting estático): no se mide */
+  }
+}
+
+function initWhatsAppTracking() {
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href*="wa.me/"]');
+    if (!link) return;
+    let source = link.dataset.waSource;
+    if (!source) {
+      if (link.closest('[data-carousel]')) source = 'carrusel';
+      else if (link.closest('#calculadora')) source = 'calculadora';
+      else if (link.closest('.equipment-card')) source = 'producto';
+      else source = 'contacto';
+    }
+    trackWhatsApp(source, Number(link.dataset.productId) || null);
+  });
 }
